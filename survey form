@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Multi-Page Survey</title>
+</head>
+<body>
+    <h1>Welcome to the Multi-Page Survey</h1>
+    <p>This is a multi-page survey to gather user feedback.</p>
+    <button onclick="startSurvey()">Start Survey</button>
+
+    <script>
+        function startSurvey() {
+            window.location.href = "page2.html";
+        }
+    </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Multi-Page Survey - Page 2</title>
+</head>
+<body>
+    <h1>Survey Page 2</h1>
+    <form id="surveyForm">
+        <label for="question1">Question 1: What is your favorite color?</label><br>
+        <input type="text" id="question1" name="question1"><br><br>
+
+        <button type="button" onclick="saveAndNext()">Next</button>
+    </form>
+
+    <script>
+        function saveAndNext() {
+            const form = document.getElementById("surveyForm");
+            const formData = new FormData(form);
+            localStorage.setItem("page2Data", JSON.stringify(Object.fromEntries(formData)));
+            window.location.href = "page3.html";
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Multi-Page Survey - Page 3</title>
+</head>
+<body>
+    <h1>Survey Page 3</h1>
+    <form id="surveyForm">
+        <label for="question2">Question 2: What is your favorite animal?</label><br>
+        <input type="text" id="question2" name="question2"><br><br>
+
+        <button type="button" onclick="saveAndSubmit()">Submit</button>
+    </form>
+
+    <script>
+        function saveAndSubmit() {
+            const form = document.getElementById("surveyForm");
+            const formData = new FormData(form);
+            const page2Data = JSON.parse(localStorage.getItem("page2Data"));
+            const combinedData = { ...page2Data, ...Object.fromEntries(formData) };
+            localStorage.removeItem("page2Data");
+
+            // Send data to server or process it further
+            sendDataToServer(combinedData);
+        }
+
+        function sendDataToServer(data) {
+            // Here you would make an AJAX request to your server to store the data in a database or send it via email.
+            // Example using JavaScript's fetch API:
+            fetch("submit.php", {
+                method: "POST",
+                body: JSON.stringify(data)
+            }).then(response => {
+                if (response.ok) {
+                    alert("Survey submitted successfully!");
+                    window.location.href = "thankyou.html";
+                } else {
+                    alert("Failed to submit survey.");
+                }
+            }).catch(error => {
+                console.error("Error:", error);
+            });
+        }
+    </script>
+</body>
+</html>
